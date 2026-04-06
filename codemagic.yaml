@@ -1,27 +1,24 @@
 workflows:
-  build-macos:
-    name: Build macOS App
+  build-all:
+    name: Build Android APK + macOS App
     max_build_duration: 60
     environment:
       flutter: stable
       xcode: latest
-      vars:
-        APP_NAME: "untitled"
     scripts:
-      - name: Enable macOS
-        script: flutter config --enable-macos-desktop
+      # 初始化环境
+      - flutter config --enable-macos-desktop
+      - flutter pub get
 
-      - name: Get Flutter dependencies
-        script: flutter pub get
+      # 构建安卓 APK（手机直接安装）
+      - flutter build apk --debug
 
-      # 👇 关键：构建时指定架构，兼容虚拟机
-      - name: Build macOS Release
-        script: flutter build macos --release --arch x86_64
+      # 构建 macOS（虚拟机直接运行）
+      - flutter build macos --release --arch x86_64
+      - cd build/macos/Build/Products/Release
+      - zip -r app.zip *.app
 
-      - name: Zip App Bundle
-        script: |
-          cd build/macos/Build/Products/Release
-          zip -r "$APP_NAME.zip" "$APP_NAME.app"
-
+    # 构建完成后可以下载的文件
     artifacts:
-      - build/macos/Build/Products/Release/*.zip
+      - build/app/outputs/flutter-apk/app-debug.apk
+      - build/macos/Build/Products/Release/app.zip
