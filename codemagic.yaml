@@ -6,8 +6,13 @@ workflows:
       flutter: stable
       xcode: latest
     scripts:
+      # 1. 开启macOS桌面支持（必须，否则项目无macOS工程）
       - flutter config --enable-macos-desktop
+      # 2. 给项目添加macOS桌面工程文件（解决项目无macOS支持的问题）
+      - flutter create . --platforms=macos
+      # 3. 获取依赖
       - flutter pub get
-      - flutter build macos --release
+      # 4. 构建通用二进制，同时兼容arm64和x86_64，适配虚拟机
+      - flutter build macos --release --universal
     artifacts:
       - build/macos/Build/Products/Release/*.app
