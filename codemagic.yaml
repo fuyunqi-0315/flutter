@@ -14,8 +14,9 @@ workflows:
       - name: Get Flutter dependencies
         script: flutter pub get
 
+      # 👇 关键：构建时指定架构，兼容虚拟机
       - name: Build macOS Release
-        script: flutter build macos --release
+        script: flutter build macos --release --arch x86_64
 
       - name: Zip App Bundle
         script: |
