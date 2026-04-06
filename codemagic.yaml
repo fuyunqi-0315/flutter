@@ -2,14 +2,31 @@ workflows:
   build-macos:
     name: Build macOS DMG
     environment:
+      # 使用稳定版 Flutter
       flutter: stable
+      # 使用最新版 Xcode (包含 macOS 构建工具)
       xcode: latest
+      # 必须指定 macOS 运行环境
+      macos: sonoma
 
+    # 在构建前确保开启 macOS 支持
     scripts:
-      - flutter pub get
-      - flutter build macos --release
-      - cd build/macos/Build/Products/Release
-      - zip -r app.zip *.app
+      - name: Enable macOS
+        script: flutter config --enable-macos-desktop
+
+      - name: Get dependencies
+        script: flutter pub get
+
+      - name: Build Release
+        script: flutter build macos --release
+
+      - name: Create DMG
+        # 这一步是将 .app 转换为 .dmg 的关键步骤
+        script: |
+          mkdir -p build/artifacts
+          # 创建一个临时的挂载点
+          hdiutil create -volname "MyApp" -srcfolder build/macos/Build/Products/Release/untitled.app -ov -format UDZO build/artifacts/untitled.dmg
 
     artifacts:
-      - build/macos/Build/Products/Release/app.zip
+      # 指定输出文件，这样你可以在 Codemagic 界面下载到
+      - build/artifacts/*.dmg
