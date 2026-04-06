@@ -10,15 +10,15 @@ workflows:
       - flutter config --enable-macos-desktop
       - flutter pub get
 
-      # 构建安卓 APK（手机直接安装）
+      # 构建安卓 APK（手机直接安装，已验证成功）
       - flutter build apk --debug
 
-      # 构建 macOS（虚拟机直接运行）
-      - flutter build macos --release --arch x86_64
+      # 构建 macOS（兼容虚拟机，去掉不支持的--arch参数）
+      - flutter build macos --release
       - cd build/macos/Build/Products/Release
       - zip -r app.zip *.app
 
-    # 构建完成后可以下载的文件
+    # 构建产物
     artifacts:
       - build/app/outputs/flutter-apk/app-debug.apk
       - build/macos/Build/Products/Release/app.zip
