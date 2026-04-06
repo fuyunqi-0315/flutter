@@ -1,48 +1,15 @@
 workflows:
   build-macos:
     name: Build macOS DMG
-    max_build_duration: 60
     environment:
       flutter: stable
       xcode: latest
-      vars:
-        # ⚠️ 注意：这里必须填你实际的 App 名称（与 .app 文件名一致）
-        # 如果不确定，通常是小写的项目名，或者你在 Xcode 里设置的产品名
-        APP_NAME: "untitled" 
 
     scripts:
-      - name: Get Flutter dependencies
-        script: flutter pub get
-
-      - name: Build macOS Release
-        script: flutter build macos --release
-
-      - name: Prepare App Bundle
-        script: |
-          # 创建用于存放最终文件的目录
-          mkdir -p build/dmg
-          # 复制编译好的 .app 文件
-          cp -R build/macos/Build/Products/Release/$APP_NAME.app build/dmg/
-
-      - name: Install create-dmg
-        script: |
-          # 安装制作 dmg 安装包的工具
-          npm install -g create-dmg
-
-      - name: Create DMG Installer
-        script: |
-          cd build/dmg
-          # 制作 .dmg 文件
-          create-dmg \
-            --volname "$APP_NAME" \
-            --window-pos 200 120 \
-            --window-size 600 400 \
-            --icon-size 100 \
-            --icon "$APP_NAME.app" 150 150 \
-            --hide-extension "$APP_NAME.app" \
-            --app-drop-link 450 150 \
-            "$APP_NAME.dmg" \
-            "$APP_NAME.app"
+      - flutter pub get
+      - flutter build macos --release
+      - cd build/macos/Build/Products/Release
+      - zip -r app.zip *.app
 
     artifacts:
-      - build/dmg/*.dmg
+      - build/macos/Build/Products/Release/app.zip
