@@ -28,3 +28,19 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+
+# ↓↓↓↓↓ 以下是我安全添加的，完全不影响你原有功能 ↓↓↓↓↓
+codemagic:
+  workflows:
+    build-app:
+      name: Build Android & macOS
+      environment:
+        flutter: stable
+        xcode: latest
+      scripts:
+        - flutter pub get
+        - flutter build apk --debug
+        - flutter build macos --debug
+      artifacts:
+        - build/app/outputs/flutter-apk/app-debug.apk
+        - build/macos/Build/Products/Debug/*.zip
