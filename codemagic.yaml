@@ -9,9 +9,5 @@ workflows:
       - flutter config --enable-macos-desktop
       - flutter pub get
       - flutter build macos --release
-      # 👇 关键修复：用完整项目名打包，避免通配符匹配失败
-      - cd build/macos/Build/Products/Release
-      - zip -r untitled.zip untitled.app
-
     artifacts:
-      - build/macos/Build/Products/Release/untitled.zip
+      - build/macos/Build/Products/Release/*.app
